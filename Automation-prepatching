@@ -26,6 +26,9 @@ df -Th | grep -vE "tmpfs|squashfs" | wc -l
 echo "=================ifconfig -a================="
 ifconfig -a
 
+echo "=======dpkg-query -W -f='${binary:Package}\t${Version}\n' | sort=======" 
+dpkg-query -W -f='${binary:Package}\t${Version}\n' | sort
+
 echo "=================netstat -nr================="
 netstat -nr
 
