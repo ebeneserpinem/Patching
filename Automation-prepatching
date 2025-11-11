@@ -1,0 +1,59 @@
+#!/usr/bin/bash
+
+# =========================
+# Setup log file
+# =========================
+LOGDIR="/var/log/system-report"
+mkdir -p "$LOGDIR"
+LOGFILE="$LOGDIR/system-info-$(date +%F_%H-%M-%S).log"
+
+# Semua output masuk log dan tampil di terminal
+exec > >(tee -a "$LOGFILE") 2>&1
+
+# =========================
+# Mulai script
+# =========================
+
+echo "=================date================="
+date 
+
+echo "=================df -Th| grep -v tmpfs================="
+df -Th | grep -vE "tmpfs|squashfs"
+
+echo "=================df -Th| grep -vE tmpfs |wc -l================="
+df -Th | grep -vE "tmpfs|squashfs" | wc -l
+
+echo "=================ifconfig -a================="
+ifconfig -a
+
+echo "=================netstat -nr================="
+netstat -nr
+
+echo "=================firewall status================="
+sudo ufw status
+
+echo "=================lsblk================="
+lsblk
+
+echo "=================blkid================="
+blkid 
+
+echo "=================cat /etc/fstab================="
+cat /etc/fstab | grep -v ^#
+
+echo "=================uname -a================="
+uname -a 
+
+echo "=================cat /etc/os-release================="
+cat /etc/os-release
+
+echo "=================systemctl-running-status================="
+systemctl list-units --type=service --state=running
+
+echo "=================list of installed softwares================="
+apt list --installed 2> /dev/null
+
+# =========================
+# Selesai
+# =========================
+echo "Output tersimpan di: $LOGFILE"
